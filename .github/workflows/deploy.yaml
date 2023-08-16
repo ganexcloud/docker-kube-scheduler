@@ -41,8 +41,20 @@ jobs:
       #    registry: ${{ env.DOCKER_IMAGE_REGISTRY }}
       #    repository: ${{ env.DOCKER_IMAGE_REPOSITORY }}
       #    auto_tag: true
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.DOCKER_IMAGE_REGISTRY }}/${{ env.DOCKER_IMAGE_REPOSITORY }}
+          #flavor: latest=true
+          tags: |
+            type=ref,event=pr
+            type=semver,pattern={{raw}}
+            type=semver,pattern=v{{major}}.{{minor}}
+            type=semver,pattern=v{{major}}
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: test
+          tags: ${{ steps.meta.outputs.tags }}
+          #tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/test
