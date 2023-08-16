@@ -10,5 +10,6 @@ RUN apt-get update && apt-get install -y rsync && \
   GOOS=linux GOARCH=${TARGETARCH} CGO_ENABLED=0 KUBE_BUILD_PLATFORMS=${TARGETPLATFORM} make WHAT=cmd/kube-scheduler
 
 FROM busybox:1.36.1
+ARG TARGETPLATFORM
 COPY --from=builder /go/src/k8s.io/kubernetes/_output/local/bin/${TARGETPLATFORM}/kube-scheduler /usr/local/bin/kube-scheduler
 ENTRYPOINT ["/usr/local/bin/kube-scheduler"]
